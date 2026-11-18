@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -9,28 +10,33 @@ on:
       - main
 
 jobs:
-  
-
   part7_bloglist:
     runs-on: ubuntu-24.04
+
     services:
       mongodb:
         image: mongo:8
         ports:
           - 27017:27017
+
     env:
       TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install bloglist dependencies
-        working-directory: open-extension/bloglist/server
+
+      - name: Install bloglist backend dependencies
+        working-directory: open-extension/bloglist/backend
         run: npm ci
-      - name: Install client dependencies
-        working-directory: open-extension/bloglist/client
+
+      - name: Install bloglist frontend dependencies
+        working-directory: open-extension/bloglist/frontend
         run: npm ci
+
       - name: Run bloglist e2e tests
         working-directory: open-extension/bloglist-tests
         run: |
@@ -40,19 +46,21 @@ jobs:
 
   part7_routed_anecdotes:
     runs-on: ubuntu-24.04
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Install app dependencies
         working-directory: open-extension/routed-anecdotes
         run: npm ci
+
       - name: Run e2e tests
         working-directory: open-extension/routed-anecdotes-tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
           npm test
-
-  
