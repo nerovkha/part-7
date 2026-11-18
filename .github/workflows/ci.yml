@@ -30,15 +30,15 @@ jobs:
           node-version: '22'
 
       - name: Install bloglist backend dependencies
-        working-directory: open-extension/bloglist/backend
+        working-directory: bloglist/server
         run: npm ci
 
       - name: Install bloglist frontend dependencies
-        working-directory: open-extension/bloglist/frontend
+        working-directory: bloglist/client
         run: npm ci
 
       - name: Run bloglist e2e tests
-        working-directory: open-extension/bloglist-tests
+        working-directory: bloglist-tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
@@ -55,11 +55,11 @@ jobs:
           node-version: '22'
 
       - name: Install app dependencies
-        working-directory: open-extension/routed-anecdotes
+        working-directory: routed-anecdotes
         run: npm ci
 
       - name: Run e2e tests
-        working-directory: open-extension/routed-anecdotes-tests
+        working-directory: routed-anecdotes-tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
