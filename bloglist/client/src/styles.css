@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.45;
+}
+
+body {
+  margin: 0;
+  padding: 1.25rem 2rem;
+  color: #1f2430;
+  background: #f7f8fb;
+}
+
+a {
+  color: #5b4bb7;
+}
+
+a:hover {
+  color: #40338c;
+}
+
+h1,
+h2,
+h3 {
+  color: #2a2f45;
+}
+
+nav > div,
+nav {
+  margin-bottom: 0.5rem;
+}
+
+input {
+  padding: 0.35rem 0.55rem;
+  margin: 0.15rem 0.35rem 0.35rem 0;
+  border: 1px solid #c9cdd8;
+  border-radius: 6px;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid #5b4bb7;
+  outline-offset: 1px;
+}
+
+button {
+  padding: 0.3rem 0.85rem;
+  border: 1px solid #5b4bb7;
+  border-radius: 6px;
+  background: #5b4bb7;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #493a9a;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+}
+
+th,
+td {
+  padding: 0.3rem 1rem 0.3rem 0;
+  text-align: left;
+}
+
+li {
+  margin: 0.2rem 0;
+}
