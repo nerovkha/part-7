@@ -1,66 +1,64 @@
-
 name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, master]
   pull_request:
-    branches:
-      - main
+    branches: [main, master]
 
 jobs:
-  part7_bloglist:
+  bloglist:
     runs-on: ubuntu-24.04
-
     services:
       mongodb:
         image: mongo:8
         ports:
           - 27017:27017
-
     env:
       TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Install bloglist backend dependencies
+      - name: Install bloglist server dependencies
         working-directory: bloglist/server
         run: npm ci
-
-      - name: Install bloglist frontend dependencies
+      - name: Install bloglist client dependencies
         working-directory: bloglist/client
         run: npm ci
-
       - name: Run bloglist e2e tests
         working-directory: bloglist-tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
           npm test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: bloglist-playwright-report
+          path: bloglist-tests/playwright-report/
+          retention-days: 7
 
-  part7_routed_anecdotes:
+  routed-anecdotes:
     runs-on: ubuntu-24.04
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-
       - name: Install app dependencies
         working-directory: routed-anecdotes
         run: npm ci
-
       - name: Run e2e tests
         working-directory: routed-anecdotes-tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
           npm test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: routed-anecdotes-playwright-report
+          path: routed-anecdotes-tests/playwright-report/
+          retention-days: 7
