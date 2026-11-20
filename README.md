@@ -55,3 +55,7 @@ The deploy steps run only when the `FLY_API_TOKEN` repository secret is
 set, so a copy of this directory in a new repository still gets a green
 CI without any secrets. The production database URL (`MONGODB_URI`) and
 JWT `SECRET` live in Fly secrets, never in git.
+
+`main` is protected (exercise 11.21): changes land only through pull
+requests that pass the `bloglist` and `routed-anecdotes` checks and get
+one approving review, and the rule applies to administrators too.
