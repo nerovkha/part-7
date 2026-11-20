@@ -1,10 +1,11 @@
-name: CI
+name: Deployment pipeline
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
+    types: [opened, synchronize, reopened]
 
 jobs:
   bloglist:
@@ -27,6 +28,12 @@ jobs:
       - name: Install bloglist client dependencies
         working-directory: bloglist/client
         run: npm ci
+      - name: Lint bloglist client
+        working-directory: bloglist/client
+        run: npm run lint
+      - name: Build bloglist client
+        working-directory: bloglist/client
+        run: npm run build
       - name: Run bloglist e2e tests
         working-directory: bloglist-tests
         run: |
@@ -62,3 +69,37 @@ jobs:
           name: routed-anecdotes-playwright-report
           path: routed-anecdotes-tests/playwright-report/
           retention-days: 7
+
+  deploy:
+    needs: [bloglist, routed-anecdotes]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    concurrency: deploy-bloglist
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy bloglist to Fly.io
+        if: env.FLY_API_TOKEN != ''
+        working-directory: bloglist
+        run: flyctl deploy --remote-only --ha=false
+      - name: Health check
+        if: env.FLY_API_TOKEN != ''
+        run: curl --fail --silent --retry 6 --retry-delay 5 --retry-all-errors https://nerovkha-bloglist.fly.dev/health
+
+  tag_release:
+    needs: [deploy]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.71.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          WITH_V: true
